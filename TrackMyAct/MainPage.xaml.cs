@@ -26,5 +26,21 @@ namespace TrackMyAct
         {
             this.InitializeComponent();
         }
+
+       
+        private void StopEllipse_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void StopTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
+
+        private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+
+        }
     }
 }

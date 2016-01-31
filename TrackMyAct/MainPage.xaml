@@ -6,8 +6,189 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
-
+    
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            
+            <Image x:Name="image" Source="images/background600.png" 
+               Stretch="Fill" Grid.RowSpan="4" Grid.Row="0" 
+               Grid.Column="0" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5">
+            </Image>
+            
+            <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                    <RowDefinition Height="Auto"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="TRACK MY ACT" Grid.Row="0"
+                               HorizontalAlignment="Center" 
+                               VerticalAlignment="Center"
+                               FontSize="15"
+                               FontFamily="Segoe UI"
+                               Margin="10"
+                               Foreground="White"></TextBlock>
+               
+                <TextBlock Text="Driving To Work"
+                           TextAlignment="Center"
+                           TextWrapping="WrapWholeWords" 
+                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                           FontFamily="Segoe Ui"
+                           FontWeight="SemiBold"
+                           Foreground="White"
+                           Margin="0,50,0,0"
+                           Grid.Row="1" Grid.ColumnSpan="6" 
+                           FontSize="20" d:IsLocked="True"></TextBlock>
+                <TextBlock Text="Your personal best is" 
+                           Foreground="White" 
+                           Grid.Row="2" 
+                           FontWeight="Light"
+                           FontFamily="Segoe UI" 
+                           TextAlignment="Center" 
+                           TextWrapping="WrapWholeWords" 
+                           Grid.ColumnSpan="6"
+                           VerticalAlignment="Center"
+                           Margin="5,5,0,15"
+                           FontSize="12"
+                           HorizontalAlignment="Center" d:IsLocked="True"></TextBlock>
+                <Border BorderBrush="#625F80" 
+                        BorderThickness="0,0,0,1"
+                        Grid.Row="2" VerticalAlignment="Bottom"
+                        Grid.Column="0" Grid.ColumnSpan="6" d:IsLocked="True"></Border>
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                    <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock HorizontalAlignment="Stretch" Margin="15"
+                           TextAlignment="Center" Grid.Row="0" Grid.Column="1"
+                           Foreground="White" FontSize="18"
+                           Text="Median"></TextBlock>
+                <TextBlock HorizontalAlignment="Center" Margin="15" 
+                           Grid.Row="0" Grid.Column="2"
+                           TextAlignment="Center" TextWrapping="WrapWholeWords"
+                           Foreground="White" FontSize="18"
+                           Text="03:23:22" d:IsLocked="True"></TextBlock>
+                <Border Grid.Row="0" VerticalAlignment="Bottom" 
+                        Grid.Column="1"
+                        Grid.ColumnSpan="2"
+                        BorderBrush="#625F80"
+                        BorderThickness="0,0,0,1" 
+                        ></Border>
+                <TextBlock Grid.Row="1" Grid.Column="1"
+                       HorizontalAlignment="Center"
+                       Margin="15"
+                       TextAlignment="Center" 
+                       TextWrapping="WrapWholeWords"
+                       Foreground="White" FontSize="18"
+                       Text="90%"></TextBlock>
+                <TextBlock Grid.Row="1" Grid.Column="2"
+                       HorizontalAlignment="Center" 
+                       Margin="15"
+                       TextAlignment="Center" TextWrapping="WrapWholeWords"
+                       Foreground="White" FontSize="18"
+                       Text="03:23:22" d:IsLocked="True"></TextBlock>
+                <Border Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" 
+                        VerticalAlignment="Bottom" BorderBrush="#625F80"
+                        BorderThickness="0,0,0,1"></Border>
+            </Grid>
+            <Grid Grid.Row="2" x:Name="GoButtonGrid" RenderTransformOrigin="0.5,0.5">
+                    <Grid.RenderTransform>
+                        <CompositeTransform/>
+                    </Grid.RenderTransform>
+                    <Ellipse x:Name="GoEllipse" 
+                         Stroke="White"
+                         StrokeThickness="2"
+                         Tapped="GoEllipse_Tapped"
+                         Height="150" Fill="#6ED19D" Width="150" RenderTransformOrigin="0.5,0.5">
+                        <Ellipse.RenderTransform>
+                            <CompositeTransform/>
+                        </Ellipse.RenderTransform>
+                    </Ellipse>
+                    <TextBlock x:Name="GoTextBlock" 
+                           HorizontalAlignment="Center"
+                           Margin="0,0,0,5"
+                           VerticalAlignment="Center"
+                           FontSize="40"
+                           Foreground="White" Text="GO" RenderTransformOrigin="0.5,0.5">
+                        <TextBlock.RenderTransform>
+                            <CompositeTransform/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                    <TextBlock x:Name="TimerText" Visibility="Collapsed"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           FontFamily="Segoe UI Light"
+                           CharacterSpacing="15"
+                           FontSize="50"
+                           Foreground="White" Text="12:34:00"></TextBlock>
+                </Grid>
+                                
+               
+           
+
+           
+            <Grid Grid.Row="3" x:Name="NavigationButtons">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="1.2*"></ColumnDefinition>
+                    <ColumnDefinition Width="1.2*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Border BorderBrush="White" BorderThickness="0,1,1,0">
+                    <Button Foreground="White" Height="45" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="0">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <TextBlock Text="&#xE162;" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets"></TextBlock>
+                                <TextBlock Text="Charts" Foreground="White" VerticalAlignment="Center" Margin="10,0,0,0"></TextBlock>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="0,1,1,0" Grid.Column="1">
+                    <Button Foreground="White" Height="45" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="1">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" 
+                                    Foreground="White"
+                                    VerticalAlignment="Center"
+                                    Text="&#xE117;"></TextBlock>
+                                <TextBlock Foreground="White" Margin="10,0,0,0" Text="Replace Act" VerticalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Border>
+                <Border BorderBrush="White" BorderThickness="0,1,0,0" Grid.Column="2">
+                    <Button Foreground="White" Height="45" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="2">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock FontFamily="Segoe MDL2 Assets" Foreground="White" VerticalAlignment="Center" Text="&#xE109;"></TextBlock>
+                                <TextBlock Foreground="White" Margin="10,0,0,0" Text="Add an Act" VerticalAlignment="Center"></TextBlock>
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Border>
+            </Grid>
+        <Grid Grid.Row="4" x:Name="CoverPage">
+            <Rectangle Fill="#3c385c" Width="0"></Rectangle>
+        </Grid>
+
 
     </Grid>
 </Page>
