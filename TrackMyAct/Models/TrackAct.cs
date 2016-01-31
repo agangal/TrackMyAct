@@ -27,7 +27,11 @@ namespace TrackMyAct.Models
     public class TimerData
     {
         [DataMember]
-        public int time_in_seconds { get; set; }
+        public long time_in_seconds { get; set; }
+        [DataMember]
+        public int position { get; set; }   // keep track of in which order the position was added.
+        [DataMember]
+        public bool oldest { get; set; }   // set to true if it is the oldest. It'll be the first to be re-written if it is.
     }
 
     [DataContract]
@@ -40,7 +44,9 @@ namespace TrackMyAct.Models
         [DataMember]
         public string ninetypercentile { get; set; }
         [DataMember]
-        public int? current_count { get; set; }
+        public int current_count { get; set; }
+        [DataMember]
+        public int count_of_times { get; set; }  // keep a count of the number of timer data stored. 
         [DataMember]
         public List<TimerData> timer_data { get; set; }
     }
