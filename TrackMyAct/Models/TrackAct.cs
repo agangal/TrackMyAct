@@ -46,29 +46,13 @@ namespace TrackMyAct.Models
         [DataMember]
         public int current_count { get; set; }
         [DataMember]
-        public int count_of_times { get; set; }  // keep a count of the number of timer data stored. 
-        [DataMember]
         public List<TimerData> timer_data { get; set; }
-    }
-
-    [DataContract]
-    public class Activity
-    {
-        [DataMember]
-        public List<ActivityData> data { get; set; }
-    }
-
-    [DataContract]
-    public class Collection
-    {
-        [DataMember]
-        public List<Activity> activity { get; set; }
     }
 
     [DataContract]
     public class RootObjectTrackAct
     {
         [DataMember]
-        public Collection collection { get; set; }
+        public List<ActivityData> activity { get; set; }
     }
 }
