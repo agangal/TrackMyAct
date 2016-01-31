@@ -15,6 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
+using TrackMyAct.Models;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace TrackMyAct
@@ -27,16 +28,17 @@ namespace TrackMyAct
 
         private DateTime startTime;
         private string timerdata;
+        private TimeSpan timerdata_TimeSpan;
         //private DispatcherTimer _timer;
         private DispatcherTimer timer;
+        private Library library;
         public MainPage()
         {
             this.InitializeComponent();
+            library = new Library();
             //timerdata = "00:00:00";
         }
 
-       
-        
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
             startTimer();
@@ -73,9 +75,11 @@ namespace TrackMyAct
             StopEllipse.IsTapEnabled = false;
             StopTextBlock.IsTapEnabled = false;
             timer.Stop();
-            timer.Tick -= timer_Tick; 
+            timer.Tick -= timer_Tick;
+            library.updateDB(TimerText.Text, timerdata_TimeSpan);
         }
 
+        
         private void startTimer()
         {
             TimerText.Text = "00:00:00";
@@ -108,7 +112,7 @@ namespace TrackMyAct
         {
             try
             {
-               
+                timerdata_TimeSpan = DateTime.Now.Subtract(startTime);
                 string subtract = (DateTime.Now.Subtract(startTime)).ToString();
                 timerdata = subtract.Substring(0, 8);
                 TimerText.Text = timerdata;
