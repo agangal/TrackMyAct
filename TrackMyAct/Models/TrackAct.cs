@@ -15,6 +15,12 @@ namespace TrackMyAct.Models
             RootObjectTrackAct rtrackact = JsonConvert.DeserializeObject<RootObjectTrackAct>(response);
             return rtrackact;
         }
+
+        public static string trackactSerializer(RootObjectTrackAct rtrackact)
+        {
+            string response = JsonConvert.SerializeObject(rtrackact);
+            return response;
+        }
     }
 
     [DataContract]
