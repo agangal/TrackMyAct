@@ -338,7 +338,7 @@
                                Margin="10"
                                Foreground="White"></TextBlock>
 
-            <TextBlock Text="Driving To Work"
+            <TextBlock Text="Driving To Work" x:Name="activityName"
                            TextAlignment="Center"
                            TextWrapping="WrapWholeWords" 
                            HorizontalAlignment="Center" VerticalAlignment="Center"

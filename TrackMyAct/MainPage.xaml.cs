@@ -76,7 +76,7 @@ namespace TrackMyAct
             StopTextBlock.IsTapEnabled = false;
             timer.Stop();
             timer.Tick -= timer_Tick;
-            library.updateDB(TimerText.Text, timerdata_TimeSpan);
+            library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
         }
 
         
