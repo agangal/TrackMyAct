@@ -24,23 +24,22 @@ namespace TrackMyAct
     /// </summary>
     public sealed partial class MainPage : Page
     {
+
+        private DateTime startTime;
+        private string timerdata;
+        //private DispatcherTimer _timer;
+        private DispatcherTimer timer;
         public MainPage()
         {
             this.InitializeComponent();
+            //timerdata = "00:00:00";
         }
 
        
         
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Storyboard myStoryboard;
-            Debug.WriteLine("In Go Ellipse Tapped Event");
-            myStoryboard = (Storyboard)this.Resources["GoButtonPressed"];
-            myStoryboard.Begin();
-            GoTextBlock.IsTapEnabled = false;
-            GoEllipse.IsTapEnabled = false;
-            StopEllipse.IsTapEnabled = true;
-            StopTextBlock.IsTapEnabled = true;
+            startTimer();
         }
 
         private void RecycleButton_Click(object sender, RoutedEventArgs e)
@@ -50,38 +49,76 @@ namespace TrackMyAct
 
         private void GoTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            startTimer();
+        }
+
+        private void StopEllipse_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            stopTimer();
+        }
+
+        private void StopTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            stopTimer();
+        }
+
+        private void stopTimer()
+        {
             Storyboard myStoryboard;
-            Debug.WriteLine("In Go Text Tapped Event");
+            Debug.WriteLine("In Stop Timer");
+            myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
+            myStoryboard.Begin();
+            GoTextBlock.IsTapEnabled = true;
+            GoEllipse.IsTapEnabled = true;
+            StopEllipse.IsTapEnabled = false;
+            StopTextBlock.IsTapEnabled = false;
+            timer.Stop();
+            timer.Tick -= timer_Tick; 
+        }
+
+        private void startTimer()
+        {
+            TimerText.Text = "00:00:00";
+            Storyboard myStoryboard;
+            Debug.WriteLine("In Start Timer");
             myStoryboard = (Storyboard)this.Resources["GoButtonPressed"];
             myStoryboard.Begin();
             GoTextBlock.IsTapEnabled = false;
             GoEllipse.IsTapEnabled = false;
             StopEllipse.IsTapEnabled = true;
             StopTextBlock.IsTapEnabled = true;
+            startTime = DateTime.Now;
+            //startTicks = DateTime.Now.Ticks;
+
+            try
+            {
+                timer = new DispatcherTimer();
+                timer.Tick += timer_Tick;
+                timer.Interval = new TimeSpan(0, 0, 1);
+                timer.Start();
+                timer_Tick(null, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception in starting timer : " + ex);
+            }
         }
 
-        private void StopEllipse_Tapped(object sender, TappedRoutedEventArgs e)
+        private void timer_Tick(object sender, object e)
         {
-            Storyboard myStoryboard;
-            Debug.WriteLine("In Stop Ellipse Tapped Event");
-            myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
-            myStoryboard.Begin();
-            GoTextBlock.IsTapEnabled = true;
-            GoEllipse.IsTapEnabled = true;
-            StopEllipse.IsTapEnabled = false;
-            StopTextBlock.IsTapEnabled = false;
-        }
-
-        private void StopTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            Storyboard myStoryboard;
-            Debug.WriteLine("In Stop Text Tapped Event");
-            myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
-            myStoryboard.Begin();
-            GoTextBlock.IsTapEnabled = true;
-            GoEllipse.IsTapEnabled = true;
-            StopEllipse.IsTapEnabled = false;
-            StopTextBlock.IsTapEnabled = false;
+            try
+            {
+               
+                string subtract = (DateTime.Now.Subtract(startTime)).ToString();
+                timerdata = subtract.Substring(0, 8);
+                TimerText.Text = timerdata;
+                Debug.WriteLine("Result of subtraction : " + timerdata);
+                
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine("Exception in timer_Tick : " + ex);
+            }
         }
     }
 }

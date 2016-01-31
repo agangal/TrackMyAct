@@ -439,12 +439,13 @@
             </TextBlock>
 
             <TextBlock x:Name="TimerText" Visibility="Collapsed"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           FontFamily="Segoe UI Light"
-                           CharacterSpacing="15"
-                           FontSize="38"
-                           Foreground="White" Text="12:34:00"></TextBlock>
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="Segoe UI"
+                       FontWeight="SemiBold"
+                       CharacterSpacing="15"
+                       FontSize="38"
+                       Foreground="White" Text="00:00:00"></TextBlock>
             <Ellipse x:Name="StopEllipse" 
                          Stroke="White" Visibility="Collapsed"
                          StrokeThickness="2"
