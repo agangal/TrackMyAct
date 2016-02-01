@@ -17,6 +17,7 @@ using Windows.UI.Xaml.Navigation;
 
 using TrackMyAct.Models;
 using System.Threading.Tasks;
+using Windows.Storage;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace TrackMyAct
@@ -33,11 +34,31 @@ namespace TrackMyAct
         //private DispatcherTimer _timer;
         private DispatcherTimer timer;
         private Library library;
+        private RootObjectTrackAct rtrackact;
+        private long countLimit;
         public MainPage()
         {
             this.InitializeComponent();
             library = new Library();
+            countLimit = 14;
             //timerdata = "00:00:00";
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            bool res = await library.checkIfFileExists("updateDB");
+            if(res)
+            {
+                string restring = await library.readFile("updateDB");
+                rtrackact = TrackAct.trackactDataDeserializer(restring);
+            }
+            else
+            {
+                ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
+                StatisticsGrid.Opacity = 0;
+                personalBest.Opacity = 0;
+            }
         }
 
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
@@ -67,10 +88,12 @@ namespace TrackMyAct
 
         private async void stopTimer()
         {
+            timer.Stop();
+            timer.Tick -= timer_Tick;
             Debug.WriteLine("Starting UpdateDB at : " + DateTime.Now.Millisecond);
-            await library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
+            library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
             //Task.Delay(30);
-            RefreshUI();
+            
             Storyboard myStoryboard;
             Debug.WriteLine("In Stop Timer");
             myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
@@ -79,24 +102,65 @@ namespace TrackMyAct
             GoEllipse.IsTapEnabled = true;
             StopEllipse.IsTapEnabled = false;
             StopTextBlock.IsTapEnabled = false;
-            timer.Stop();
-            timer.Tick -= timer_Tick;
-            //library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
             
+            RefreshUI();
+            //library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
+
         }
 
-        private async void RefreshUI()
+        private void RefreshUI()
         {
-            string res = await library.readFile("activityDB");
-            RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
-            for(int i=0; i < rtrackact.activity.Count; i++)
+            //string res = await library.readFile("activityDB");
+            //RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
+            if ((bool)ApplicationData.Current.LocalSettings.Values["FirstLaunch"] == true)
             {
-                if (rtrackact.activity[i].name == activityName.Text)
+                personalBest.Text = TimerText.Text;
+                personalBest.Opacity = 100;
+
+                MedianTextBlock.Text = TimerText.Text;
+                NinetyPercentileTextBlock.Text = TimerText.Text;
+                StatisticsGrid.Opacity = 100;
+                ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = false;
+            }
+            else
+            {
+
+                int activity_pos = -1;
+                for (int i = 0; i < rtrackact.activity.Count; i++)
                 {
-                    MedianTextBlock.Text = rtrackact.activity[i].median;
-                    NinetyPercentileTextBlock.Text = rtrackact.activity[i].ninetypercentile;
-                    personalBest.Text = "Your personal best is " + rtrackact.activity[i].personal_best;
+                    if (rtrackact.activity[i].name == activityName.Text)
+                    {
+                        activity_pos = i;
+                    }
                 }
+
+                TimerData tdata = new TimerData();
+                tdata.position = rtrackact.activity[activity_pos].timer_data[rtrackact.activity[activity_pos].timer_data.Count - 1].position + 1; // The mumbo jumbo is to get the value of 'position' in the last element in the track_data list and adding 1 to it.
+                if (tdata.position >= countLimit)
+                {
+                    rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
+                }
+                tdata.time_in_seconds = timerdata_TimeSpan.Seconds;
+
+                SortedSet<long> time_in_seconds = new SortedSet<long>();
+                for (int i = 0; i < rtrackact.activity[activity_pos].timer_data.Count; i++)
+                {
+                    time_in_seconds.Add(rtrackact.activity[activity_pos].timer_data[i].time_in_seconds);
+                }
+                time_in_seconds.Add(timerdata_TimeSpan.Seconds);
+                long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
+                rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
+                int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
+                long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
+                rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
+                long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
+                rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
+                rtrackact.activity[activity_pos].timer_data.Add(tdata);
+                personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                personalBest.Opacity = 100;
+                MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                StatisticsGrid.Opacity = 100;
             }
         }
         private void startTimer()

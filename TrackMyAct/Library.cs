@@ -16,7 +16,7 @@ namespace TrackMyAct
         {
             countLimit = 14;
         }
-        private async Task<bool> checkIfFileExists(string filename)
+        public async Task<bool> checkIfFileExists(string filename)
         {
             var item = await ApplicationData.Current.LocalFolder.TryGetItemAsync(filename);
             if (item == null)
@@ -110,7 +110,7 @@ namespace TrackMyAct
                     rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
                     int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
                     long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
-                    rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
+                    rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
                     long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
                     rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
                     rtrackact.activity[activity_pos].timer_data.Add(tdata);
