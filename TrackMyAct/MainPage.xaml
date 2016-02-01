@@ -348,7 +348,7 @@
                            Margin="0,50,0,0"
                            Grid.Row="1" Grid.ColumnSpan="6" 
                            FontSize="20" d:IsLocked="True"></TextBlock>
-            <TextBlock Text="Your personal best is" 
+            <TextBlock Text="Your personal best is" x:Name="personalBest"
                            Foreground="White" 
                            Grid.Row="2" 
                            FontWeight="Light"

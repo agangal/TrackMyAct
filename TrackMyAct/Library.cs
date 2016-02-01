@@ -66,7 +66,14 @@ namespace TrackMyAct
             return true;
         }
 
-        public async void updateDB(string timerText, TimeSpan timerdata, string activityName)
+        private long findMedian(ActivityData ractivitydata)
+        {
+            
+
+            return 0;
+        }
+
+        public async Task<bool> updateDB(string timerText, TimeSpan timerdata, string activityName)
         {
             bool res = await checkIfFileExists("activityDB");
             RootObjectTrackAct rtrackact = new RootObjectTrackAct();
@@ -92,7 +99,22 @@ namespace TrackMyAct
                         rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
                     }
                     tdata.time_in_seconds = timerdata.Seconds;
+
+                    SortedSet<long> time_in_seconds = new SortedSet<long>();
+                    for (int i = 0; i < rtrackact.activity[activity_pos].timer_data.Count; i++)
+                    {
+                        time_in_seconds.Add(rtrackact.activity[activity_pos].timer_data[i].time_in_seconds);
+                    }
+                    time_in_seconds.Add(timerdata.Seconds);
+                    long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2)) ;//time_in_seconds[time_in_seconds.Count / 2];
+                    rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
+                    int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
+                    long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
+                    rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
+                    long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
+                    rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
                     rtrackact.activity[activity_pos].timer_data.Add(tdata);
+                    //findMedian(rtrackact.activity[activity_pos]);
                 }
                 /// If the activity does not exist
                 else
@@ -103,6 +125,9 @@ namespace TrackMyAct
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = timerdata.Seconds;
                     ractivitydata.timer_data.Add(tdata);
+                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
+                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
+                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
                     rtrackact.activity.Add(ractivitydata);
                 }
             }
@@ -116,9 +141,14 @@ namespace TrackMyAct
                 ractivitydata.timer_data = new List<TimerData>();
                 ractivitydata.timer_data.Add(tdata);
                 rtrackact.activity = new List<ActivityData>();
+                ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60); 
+                ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
+                ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
                 rtrackact.activity.Add(ractivitydata);
             }
             await writeFile("activityDB", TrackAct.trackactSerializer(rtrackact));
+            Debug.WriteLine("DB update finished at : " + DateTime.Now.Millisecond);
+            return true;
         }
 
         private void updateDBFileExists(string timerText, TimeSpan timerdata, int activity_pos)

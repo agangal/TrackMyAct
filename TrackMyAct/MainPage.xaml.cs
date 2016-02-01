@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 using TrackMyAct.Models;
+using System.Threading.Tasks;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace TrackMyAct
@@ -64,8 +65,12 @@ namespace TrackMyAct
             stopTimer();
         }
 
-        private void stopTimer()
+        private async void stopTimer()
         {
+            Debug.WriteLine("Starting UpdateDB at : " + DateTime.Now.Millisecond);
+            await library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
+            //Task.Delay(30);
+            RefreshUI();
             Storyboard myStoryboard;
             Debug.WriteLine("In Stop Timer");
             myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
@@ -76,10 +81,24 @@ namespace TrackMyAct
             StopTextBlock.IsTapEnabled = false;
             timer.Stop();
             timer.Tick -= timer_Tick;
-            library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
+            //library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
+            
         }
 
-        
+        private async void RefreshUI()
+        {
+            string res = await library.readFile("activityDB");
+            RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
+            for(int i=0; i < rtrackact.activity.Count; i++)
+            {
+                if (rtrackact.activity[i].name == activityName.Text)
+                {
+                    MedianTextBlock.Text = rtrackact.activity[i].median;
+                    NinetyPercentileTextBlock.Text = rtrackact.activity[i].ninetypercentile;
+                    personalBest.Text = "Your personal best is " + rtrackact.activity[i].personal_best;
+                }
+            }
+        }
         private void startTimer()
         {
             TimerText.Text = "00:00:00";

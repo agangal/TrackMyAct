@@ -46,6 +46,8 @@ namespace TrackMyAct.Models
         [DataMember]
         public int current_count { get; set; }
         [DataMember]
+        public string personal_best { get; set; }
+        [DataMember]
         public List<TimerData> timer_data { get; set; }
     }
 
