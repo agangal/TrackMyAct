@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using TrackMyAct.Models;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
@@ -22,9 +23,20 @@ namespace TrackMyAct.Pages
     /// </summary>
     public sealed partial class Charts : Page
     {
+        private Library library;
         public Charts()
         {
             this.InitializeComponent();
+            library = new Library();
+        }
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if(await library.checkIfFileExists("activityDB"))
+            {
+                RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(await library.readFile("activityDB"));
+
+            }
         }
     }
 }
