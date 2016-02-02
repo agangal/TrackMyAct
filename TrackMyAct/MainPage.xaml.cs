@@ -14,7 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
-
+using TrackMyAct.Pages;
 using TrackMyAct.Models;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -47,11 +47,32 @@ namespace TrackMyAct
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            bool res = await library.checkIfFileExists("updateDB");
-            if(res)
+            bool res = await library.checkIfFileExists("activityDB");
+            rtrackact = new RootObjectTrackAct();
+            if (res)
             {
-                string restring = await library.readFile("updateDB");
+                string restring = await library.readFile("activityDB");
                 rtrackact = TrackAct.trackactDataDeserializer(restring);
+                Debug.WriteLine("Not the first Launch");
+                int activity_pos = -1;
+                for (int i = 0; i < rtrackact.activity.Count; i++)
+                {
+                    if (rtrackact.activity[i].name == activityName.Text)
+                    {
+                        activity_pos = i;
+                    }
+                }
+                if (activity_pos == -1)
+                {
+                    StatisticsGrid.Opacity = 0;
+                    personalBest.Opacity = 0;
+                }
+                else
+                {
+                    MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                    NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                    personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                }
             }
             else
             {
@@ -114,13 +135,31 @@ namespace TrackMyAct
             //RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
             if ((bool)ApplicationData.Current.LocalSettings.Values["FirstLaunch"] == true)
             {
-                personalBest.Text = TimerText.Text;
-                personalBest.Opacity = 100;
-
-                MedianTextBlock.Text = TimerText.Text;
-                NinetyPercentileTextBlock.Text = TimerText.Text;
-                StatisticsGrid.Opacity = 100;
-                ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = false;
+                try
+                {
+                    ActivityData ractivitydata = new ActivityData();
+                    ractivitydata.name = activityName.Text;
+                    TimerData tdata = new TimerData();
+                    tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
+                    tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+                    ractivitydata.timer_data = new List<TimerData>();
+                    ractivitydata.timer_data.Add(tdata);
+                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    rtrackact.activity = new List<ActivityData>();
+                    rtrackact.activity.Add(ractivitydata);
+                    personalBest.Text = "Your personal best is " + ractivitydata.personal_best;
+                    personalBest.Opacity = 100;
+                    MedianTextBlock.Text = ractivitydata.median;
+                    NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
+                    StatisticsGrid.Opacity = 100;
+                    ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = false;
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine("In Refresh UI FirstLaunch set to true : " + ex);
+                }
             }
             else
             {
@@ -133,34 +172,55 @@ namespace TrackMyAct
                         activity_pos = i;
                     }
                 }
-
-                TimerData tdata = new TimerData();
-                tdata.position = rtrackact.activity[activity_pos].timer_data[rtrackact.activity[activity_pos].timer_data.Count - 1].position + 1; // The mumbo jumbo is to get the value of 'position' in the last element in the track_data list and adding 1 to it.
-                if (tdata.position >= countLimit)
+                if (activity_pos == -1)
                 {
-                    rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
+                    ActivityData ractivitydata = new ActivityData();
+                    ractivitydata.name = activityName.Text;
+                    TimerData tdata = new TimerData();
+                    tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
+                    tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+                    //ractivitydata.timer_data = new List<TimerData>();
+                    ractivitydata.timer_data.Add(tdata);
+                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    rtrackact.activity.Add(ractivitydata);
+                    personalBest.Text = "Your personal best is " + ractivitydata.personal_best;
+                    personalBest.Opacity = 100;
+                    MedianTextBlock.Text = ractivitydata.median;
+                    NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
+                    StatisticsGrid.Opacity = 100;
                 }
-                tdata.time_in_seconds = timerdata_TimeSpan.Seconds;
-
-                SortedSet<long> time_in_seconds = new SortedSet<long>();
-                for (int i = 0; i < rtrackact.activity[activity_pos].timer_data.Count; i++)
+                else
                 {
-                    time_in_seconds.Add(rtrackact.activity[activity_pos].timer_data[i].time_in_seconds);
+                    TimerData tdata = new TimerData();
+                    tdata.position = rtrackact.activity[activity_pos].timer_data[rtrackact.activity[activity_pos].timer_data.Count - 1].position + 1; // The mumbo jumbo is to get the value of 'position' in the last element in the track_data list and adding 1 to it.
+                    if (tdata.position >= countLimit)
+                    {
+                        rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
+                    }
+                    tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+
+                    SortedSet<long> time_in_seconds = new SortedSet<long>();
+                    for (int i = 0; i < rtrackact.activity[activity_pos].timer_data.Count; i++)
+                    {
+                        time_in_seconds.Add(rtrackact.activity[activity_pos].timer_data[i].time_in_seconds);
+                    }
+                    time_in_seconds.Add((long)timerdata_TimeSpan.TotalSeconds);
+                    long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
+                    rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
+                    int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
+                    long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
+                    rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
+                    long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
+                    rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
+                    rtrackact.activity[activity_pos].timer_data.Add(tdata);
+                    personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                    personalBest.Opacity = 100;
+                    MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                    NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                    StatisticsGrid.Opacity = 100;
                 }
-                time_in_seconds.Add(timerdata_TimeSpan.Seconds);
-                long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
-                rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
-                int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
-                long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
-                rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
-                long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
-                rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
-                rtrackact.activity[activity_pos].timer_data.Add(tdata);
-                personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
-                personalBest.Opacity = 100;
-                MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
-                NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
-                StatisticsGrid.Opacity = 100;
             }
         }
         private void startTimer()
@@ -206,6 +266,12 @@ namespace TrackMyAct
             {
                 Debug.WriteLine("Exception in timer_Tick : " + ex);
             }
+        }
+
+        private void Charts_Click(object sender, RoutedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(AllTheData));
         }
     }
 }

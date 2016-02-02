@@ -98,14 +98,14 @@ namespace TrackMyAct
                     {
                         rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
                     }
-                    tdata.time_in_seconds = timerdata.Seconds;
+                    tdata.time_in_seconds = (long)timerdata.TotalSeconds;
 
                     SortedSet<long> time_in_seconds = new SortedSet<long>();
                     for (int i = 0; i < rtrackact.activity[activity_pos].timer_data.Count; i++)
                     {
                         time_in_seconds.Add(rtrackact.activity[activity_pos].timer_data[i].time_in_seconds);
                     }
-                    time_in_seconds.Add(timerdata.Seconds);
+                    time_in_seconds.Add((long)timerdata.TotalSeconds);
                     long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2)) ;//time_in_seconds[time_in_seconds.Count / 2];
                     rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
                     int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
@@ -123,11 +123,11 @@ namespace TrackMyAct
                     ractivitydata.name = activityName;
                     TimerData tdata = new TimerData();
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
-                    tdata.time_in_seconds = timerdata.Seconds;
+                    tdata.time_in_seconds = (long)timerdata.TotalSeconds;
                     ractivitydata.timer_data.Add(tdata);
-                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
-                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
-                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
+                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
+                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, timerdata.Minutes, (long)timerdata.TotalSeconds);
+                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
                     rtrackact.activity.Add(ractivitydata);
                 }
             }
@@ -137,16 +137,23 @@ namespace TrackMyAct
                 ractivitydata.name = activityName;
                 TimerData tdata = new TimerData();
                 tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
-                tdata.time_in_seconds = timerdata.Seconds;
+                tdata.time_in_seconds = (long)timerdata.TotalSeconds;
                 ractivitydata.timer_data = new List<TimerData>();
                 ractivitydata.timer_data.Add(tdata);
                 rtrackact.activity = new List<ActivityData>();
-                ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60); 
-                ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
-                ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Seconds / 3600, (timerdata.Seconds / 60) % 60, timerdata.Seconds % 60);
+                ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds); 
+                ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
+                ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
                 rtrackact.activity.Add(ractivitydata);
             }
-            await writeFile("activityDB", TrackAct.trackactSerializer(rtrackact));
+            try
+            {
+                await writeFile("activityDB", TrackAct.trackactSerializer(rtrackact));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
             Debug.WriteLine("DB update finished at : " + DateTime.Now.Millisecond);
             return true;
         }

@@ -480,7 +480,7 @@
                 <ColumnDefinition Width="1.2*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             <Border BorderBrush="White" BorderThickness="0,1,1,0">
-                <Button Foreground="White" Height="45" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="0">
+                <Button x:Name="Charts" Foreground="White" Height="45" Click="Charts_Click" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="0">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                             <TextBlock Text="&#xE162;" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" FontFamily="Segoe MDL2 Assets"></TextBlock>
