@@ -366,7 +366,7 @@
                      HorizontalAlignment="Center" Margin="0,40,0,0"
                      VerticalAlignment="Center"></TextBox>
             
-            <TextBlock Text="Driving To Work" x:Name="activityName" 
+            <TextBlock x:Name="activityName" 
                        TextAlignment="Center" 
                        TextWrapping="WrapWholeWords" 
                        HorizontalAlignment="Center" 

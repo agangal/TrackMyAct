@@ -43,7 +43,7 @@ namespace TrackMyAct
             this.InitializeComponent();
             library = new Library();
             countLimit = 14;
-           
+                     
             //timerdata = "00:00:00";
         }
 
@@ -67,6 +67,7 @@ namespace TrackMyAct
                 }
                 else
                 {
+                    activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
                     rtrackact = TrackAct.trackactDataDeserializer(restring);
                     Debug.WriteLine("Not the first Launch");
                     int activity_pos = -1;
@@ -102,10 +103,13 @@ namespace TrackMyAct
             ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
             StatisticsGrid.Opacity = 0;
             personalBest.Opacity = 0;
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = "IncognitoMode";
+            activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
         }
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
             activityName.Text = NewActivityName.Text;
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = activityName.Text;
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Collapsed;
@@ -133,6 +137,7 @@ namespace TrackMyAct
         private void GoTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
             activityName.Text = NewActivityName.Text;
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = activityName.Text;
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Collapsed;
@@ -174,12 +179,14 @@ namespace TrackMyAct
         {
             activity_d = new ObservableCollection<ActivityData>();
             Debug.WriteLine("In Refresh UI");
+            personalBest.Visibility = Visibility.Visible;
             //string res = await library.readFile("activityDB");
             //RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
             if ((bool)ApplicationData.Current.LocalSettings.Values["FirstLaunch"] == true)
             {
                 try
                 {
+                    activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
                     TimerData tdata = new TimerData();
@@ -223,7 +230,7 @@ namespace TrackMyAct
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
                     TimerData tdata = new TimerData();
-                    tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
+                    //tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
                     ractivitydata.timer_data = new List<TimerData>();
                     ractivitydata.timer_data.Add(tdata);
@@ -319,12 +326,13 @@ namespace TrackMyAct
         {
             Debug.WriteLine("Charts clicked");
             Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(Charts), rtrackact);
+            rootFrame.Navigate(typeof(AllTheData), rtrackact);
         }
 
         private void AddNew_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Add New Button Pressed");
+            personalBest.Visibility = Visibility.Collapsed;
             activityName.Visibility = Visibility.Collapsed;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Visible;
@@ -337,6 +345,15 @@ namespace TrackMyAct
         {
             ComboBoxItem cbt = (ComboBoxItem)activityNameComboBox.SelectedItem;
             activityName.Text = cbt == null ? activityName.Text : (string)cbt.Content;
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = activityName.Text;
+            for (int i=0; i < rtrackact.activity.Count; i++)
+            {
+                if(rtrackact.activity[i].name == activityName.Text)
+                {
+                    personalBest.Text = "Your personal best is " + rtrackact.activity[i].personal_best;
+                    personalBest.Visibility = Visibility.Visible;
+                }
+            }
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Collapsed;
