@@ -11,15 +11,17 @@
     <Grid>
         
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        
+        <TextBlock Grid.Row="0" Text="View all your data here (Page under construction)" Foreground="White"
+                   TextAlignment="Center" TextWrapping="WrapWholeWords"></TextBlock>
         <ListView Name="dataListView"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
                   ItemsSource="{x:Bind activity}"
                   IsItemClickEnabled="True"
-                  Grid.Row="0">
+                  Grid.Row="1">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:ActivityData">
                     <StackPanel Orientation="Vertical">
@@ -30,7 +32,10 @@
                                   ItemsSource="{x:Bind timer_data}">
                             <ListView.ItemTemplate>
                                 <DataTemplate x:DataType="data:TimerData">
-                                    <TextBlock Text="{x:Bind time_in_seconds}" Foreground="White"></TextBlock>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{x:Bind time_in_seconds}" Foreground="White"></TextBlock>
+                                        <TextBlock Text="seconds" Margin="10,0,0,0" Foreground="White"></TextBlock>
+                                    </StackPanel>
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
