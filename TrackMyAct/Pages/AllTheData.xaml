@@ -8,11 +8,12 @@
     xmlns:data="using:TrackMyAct.Models"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid>
+        
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Image Source="/Images/background600.png" Grid.Row="0" Stretch="Fill"></Image>
+        
         <ListView Name="dataListView"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"

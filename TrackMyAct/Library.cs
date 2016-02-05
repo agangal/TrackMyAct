@@ -125,9 +125,9 @@ namespace TrackMyAct
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata.TotalSeconds;
                     ractivitydata.timer_data.Add(tdata);
-                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
-                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, timerdata.Minutes, (long)timerdata.TotalSeconds);
-                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
+                    ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.Seconds);
+                    ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, timerdata.Minutes, (long)timerdata.Seconds);
+                    ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.Seconds);
                     rtrackact.activity.Add(ractivitydata);
                 }
             }
@@ -141,9 +141,9 @@ namespace TrackMyAct
                 ractivitydata.timer_data = new List<TimerData>();
                 ractivitydata.timer_data.Add(tdata);
                 rtrackact.activity = new List<ActivityData>();
-                ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds); 
-                ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
-                ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.TotalSeconds);
+                ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.Seconds); 
+                ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.Seconds);
+                ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", timerdata.Hours, (timerdata.Minutes), (long)timerdata.Seconds);
                 rtrackact.activity.Add(ractivitydata);
             }
             try

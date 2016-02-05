@@ -12,8 +12,9 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using TrackMyAct.Models;
 
+using TrackMyAct.Models;
+using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace TrackMyAct.Pages
@@ -24,19 +25,45 @@ namespace TrackMyAct.Pages
     public sealed partial class Charts : Page
     {
         private Library library;
+        public RootObjectTrackAct rtrackact;
+        public class time_data
+        {
+            public int count { get; set; }
+            public long time_in_seconds  { get; set; }
+            
+        }
+
         public Charts()
         {
             this.InitializeComponent();
             library = new Library();
+            this.Loaded += MainPage_Loaded;
+            rtrackact = new RootObjectTrackAct();
         }
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadChartContents();
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            if(await library.checkIfFileExists("activityDB"))
+            rtrackact = (RootObjectTrackAct)e.Parameter;
+            progressRing.IsActive = true;
+        }
+        
+        private void LoadChartContents()
+        {
+            
+            List<time_data> financialStuffList = new List<time_data>();
+            for(int i=0; i < rtrackact.activity[0].timer_data.Count; i++)
             {
-                RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(await library.readFile("activityDB"));
-
+                financialStuffList.Add(new time_data() { count = i, time_in_seconds = rtrackact.activity[0].timer_data[i].time_in_seconds });
             }
+           (BarChart.Series[0] as ColumnSeries).ItemsSource = financialStuffList;
+            progressRing.IsActive = false;
+
         }
     }
+
+   
 }

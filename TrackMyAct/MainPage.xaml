@@ -306,20 +306,20 @@
             </ObjectAnimationUsingKeyFrames>
         </Storyboard>
     </Page.Resources>
-
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    
+    <Grid>
+   
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="50"></RowDefinition>
         </Grid.RowDefinitions>
-
-        <Image x:Name="image" Source="images/background600.png" 
+        
+        <!--<Image x:Name="image" Source="images/background600.png" 
                Stretch="Fill" Grid.RowSpan="4" Grid.Row="0" 
                Grid.Column="0" Grid.ColumnSpan="2" RenderTransformOrigin="0.5,0.5">
-        </Image>
+        </Image> -->
 
         <Grid Grid.Row="0" Grid.ColumnSpan="2" d:IsLocked="True">
             <Grid.RowDefinitions>
@@ -329,15 +329,30 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
 
-            <TextBlock Text="TRACK MY ACT" Grid.Row="0"
+                <TextBlock Text="Track My Act" Grid.Row="0"
                                HorizontalAlignment="Center" 
                                VerticalAlignment="Center"
                                FontSize="15"
                                FontFamily="Segoe UI"
                                Margin="10"
                                Foreground="White"></TextBlock>
-
+                <Button HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White">
+                    <Button.Content>
+                        <StackPanel Orientation="Vertical">
+                            
+                            <TextBlock Text="About" FontSize="10"></TextBlock>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Grid>
+            
+            <TextBox Text="" x:Name="NewActivityName" Visibility="Collapsed"
+                     Grid.Row="1" Grid.ColumnSpan="6" FontSize="20" Width="300" TextAlignment="Center"
+                     Height="30" HorizontalAlignment="Center" Margin="0,40,0,0"
+                     VerticalAlignment="Center"></TextBox>
+            
             <TextBlock Text="Driving To Work" x:Name="activityName"
                            TextAlignment="Center"
                            TextWrapping="WrapWholeWords" 
@@ -345,7 +360,7 @@
                            FontFamily="Segoe Ui"
                            FontWeight="SemiBold"
                            Foreground="White"
-                           Margin="0,50,0,0"
+                           Margin="0,40,0,0"
                            Grid.Row="1" Grid.ColumnSpan="6" 
                            FontSize="20" d:IsLocked="True"></TextBlock>
             <TextBlock Text="Your personal best is" x:Name="personalBest"
@@ -503,7 +518,7 @@
                 </Button>
             </Border>
             <Border BorderBrush="White" BorderThickness="0,1,0,0" Grid.Column="2">
-                <Button Foreground="White" Height="45" FontSize="10" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="2">
+                <Button Foreground="White" Height="45" FontSize="10" x:Name="AddNew" Click="AddNew_Click" Background="{x:Null}" HorizontalAlignment="Stretch" Grid.Column="2">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal">
                             <TextBlock FontFamily="Segoe MDL2 Assets" Foreground="White" VerticalAlignment="Center" Text="&#xE109;"></TextBlock>

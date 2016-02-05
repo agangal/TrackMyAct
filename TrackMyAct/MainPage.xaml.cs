@@ -82,6 +82,8 @@ namespace TrackMyAct
             }
         }
 
+       
+
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
             startTimer();
@@ -270,8 +272,15 @@ namespace TrackMyAct
 
         private void Charts_Click(object sender, RoutedEventArgs e)
         {
+            Debug.WriteLine("Charts clicked");
             Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(AllTheData));
+            rootFrame.Navigate(typeof(Charts), rtrackact);
+        }
+
+        private void AddNew_Click(object sender, RoutedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(AllTheData), rtrackact);
         }
     }
 }

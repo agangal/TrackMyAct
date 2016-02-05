@@ -7,12 +7,14 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 namespace TrackMyAct
@@ -66,6 +68,9 @@ namespace TrackMyAct
                     //TODO: Load state from previously suspended application
                 }
 
+                ImageBrush ib = new ImageBrush();
+                ib.ImageSource = new BitmapImage(new Uri(@"ms-appx:///images/background600.png", UriKind.RelativeOrAbsolute));
+                rootFrame.Background = ib;
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
             }
@@ -77,8 +82,24 @@ namespace TrackMyAct
                 // parameter
                 rootFrame.Navigate(typeof(MainPage), e.Arguments);
             }
+            SystemNavigationManager.GetForCurrentView().BackRequested += App_BackRequested;
             // Ensure the current window is active
             Window.Current.Activate();
+        }
+
+        private void App_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+            if (rootFrame == null)
+                return;
+
+            // If we can go back and the event has not already been handled, do so.
+            if (rootFrame.CanGoBack && e.Handled == false)
+            {
+                e.Handled = true;
+                rootFrame.GoBack();
+            }
+
         }
 
         /// <summary>
@@ -102,6 +123,7 @@ namespace TrackMyAct
         {
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
+            
             deferral.Complete();
         }
     }
