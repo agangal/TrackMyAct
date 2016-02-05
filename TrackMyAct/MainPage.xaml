@@ -338,6 +338,12 @@
                                FontFamily="Segoe UI"
                                Margin="10"
                                Foreground="White"></TextBlock>
+               <!-- <ComboBox Visibility="Visible" Grid.ColumnSpan="6" 
+                      FontSize="15" Width="300" Foreground="Black"
+                      HorizontalAlignment="Center" Margin="0,40,0,0" Height="20"
+                      VerticalAlignment="Center">
+                <ComboBoxItem Content="abc"></ComboBoxItem> 
+                </ComboBox> -->
                 <Button HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="White">
                     <Button.Content>
                         <StackPanel Orientation="Vertical">
@@ -348,21 +354,31 @@
                 </Button>
             </Grid>
             
-            <TextBox Text="" x:Name="NewActivityName" Visibility="Collapsed"
-                     Grid.Row="1" Grid.ColumnSpan="6" FontSize="20" Width="300" TextAlignment="Center"
-                     Height="30" HorizontalAlignment="Center" Margin="0,40,0,0"
+            <ComboBox x:Name="activityNameComboBox" Visibility="Collapsed" SelectionChanged="activityNameComboBox_SelectionChanged" Grid.Row="1" Grid.ColumnSpan="6" 
+                      FontSize="15" Width="300" Foreground="Black"
+                      HorizontalAlignment="Center" Margin="0,40,0,0"
+                      VerticalAlignment="Center">
+                
+            </ComboBox>
+            
+            <TextBox x:Name="NewActivityName" Visibility="Collapsed"
+                     Grid.Row="1" Grid.ColumnSpan="6" FontSize="15" Width="300" TextAlignment="Center"
+                     HorizontalAlignment="Center" Margin="0,40,0,0"
                      VerticalAlignment="Center"></TextBox>
             
-            <TextBlock Text="Driving To Work" x:Name="activityName"
-                           TextAlignment="Center"
-                           TextWrapping="WrapWholeWords" 
-                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                           FontFamily="Segoe Ui"
-                           FontWeight="SemiBold"
-                           Foreground="White"
-                           Margin="0,40,0,0"
-                           Grid.Row="1" Grid.ColumnSpan="6" 
-                           FontSize="20" d:IsLocked="True"></TextBlock>
+            <TextBlock Text="Driving To Work" x:Name="activityName" 
+                       TextAlignment="Center" 
+                       TextWrapping="WrapWholeWords" 
+                       HorizontalAlignment="Center" 
+                       VerticalAlignment="Center" 
+                       FontFamily="Segoe UI"      
+                       FontWeight="SemiBold"
+                       Foreground="White"
+                      
+                       Margin="0,40,0,0"
+                       Grid.Row="1" Grid.ColumnSpan="6" 
+                       FontSize="20" d:IsLocked="True"></TextBlock>
+            
             <TextBlock Text="Your personal best is" x:Name="personalBest"
                            Foreground="White" 
                            Grid.Row="2" 

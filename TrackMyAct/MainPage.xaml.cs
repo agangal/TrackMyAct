@@ -18,6 +18,7 @@ using TrackMyAct.Pages;
 using TrackMyAct.Models;
 using System.Threading.Tasks;
 using Windows.Storage;
+using System.Collections.ObjectModel;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace TrackMyAct
@@ -36,66 +37,106 @@ namespace TrackMyAct
         private Library library;
         private RootObjectTrackAct rtrackact;
         private long countLimit;
+        private ObservableCollection<ActivityData> activity_d = new ObservableCollection<ActivityData>();
         public MainPage()
         {
             this.InitializeComponent();
             library = new Library();
             countLimit = 14;
+           
             //timerdata = "00:00:00";
         }
 
+        
+       
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
+            //activity_d = new ObservableCollection<ActivityData>();
             bool res = await library.checkIfFileExists("activityDB");
             rtrackact = new RootObjectTrackAct();
             if (res)
             {
+                
+                //activityComboBox actiboxtemp = new activityComboBox();
                 string restring = await library.readFile("activityDB");
-                rtrackact = TrackAct.trackactDataDeserializer(restring);
-                Debug.WriteLine("Not the first Launch");
-                int activity_pos = -1;
-                for (int i = 0; i < rtrackact.activity.Count; i++)
+                if (String.IsNullOrEmpty(restring))
                 {
-                    if (rtrackact.activity[i].name == activityName.Text)
-                    {
-                        activity_pos = i;
-                    }
-                }
-                if (activity_pos == -1)
-                {
-                    StatisticsGrid.Opacity = 0;
-                    personalBest.Opacity = 0;
+                    firstLaunch();
+
                 }
                 else
                 {
-                    MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
-                    NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
-                    personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                    rtrackact = TrackAct.trackactDataDeserializer(restring);
+                    Debug.WriteLine("Not the first Launch");
+                    int activity_pos = -1;
+                    for (int i = 0; i < rtrackact.activity.Count; i++)
+                    {
+                        if (rtrackact.activity[i].name == activityName.Text)
+                        {
+                            activity_pos = i;
+                        }
+
+                    }
+                    if (activity_pos == -1)
+                    {
+                        StatisticsGrid.Opacity = 0;
+                        personalBest.Opacity = 0;
+                    }
+                    else
+                    {
+                        MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                        NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                        personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                    }
                 }
             }
             else
             {
-                ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
-                StatisticsGrid.Opacity = 0;
-                personalBest.Opacity = 0;
+                firstLaunch();
             }
         }
 
-       
-
+        private void firstLaunch()
+        {
+            ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
+            StatisticsGrid.Opacity = 0;
+            personalBest.Opacity = 0;
+        }
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            activityName.Text = NewActivityName.Text;
+            activityName.Visibility = Visibility.Visible;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
+
             startTimer();
         }
 
         private void RecycleButton_Click(object sender, RoutedEventArgs e)
         {
+           
+            activityNameComboBox.Visibility = Visibility.Visible;
+            for (int i = 0; i < rtrackact.activity.Count; i++)
+            {
+
+                ComboBoxItem cbitem = new ComboBoxItem();
+                cbitem.Content = rtrackact.activity[i].name;
+
+                activityNameComboBox.Items.Add(cbitem);
+            }
+            activityName.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
             
         }
 
         private void GoTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
+            activityName.Text = NewActivityName.Text;
+            activityName.Visibility = Visibility.Visible;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
+
             startTimer();
         }
 
@@ -113,9 +154,6 @@ namespace TrackMyAct
         {
             timer.Stop();
             timer.Tick -= timer_Tick;
-            Debug.WriteLine("Starting UpdateDB at : " + DateTime.Now.Millisecond);
-            library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
-            //Task.Delay(30);
             
             Storyboard myStoryboard;
             Debug.WriteLine("In Stop Timer");
@@ -127,12 +165,15 @@ namespace TrackMyAct
             StopTextBlock.IsTapEnabled = false;
             
             RefreshUI();
-            //library.updateDB(TimerText.Text, timerdata_TimeSpan, activityName.Text);
-
+            string res = TrackAct.trackactSerializer(rtrackact);
+            await library.writeFile("activityDB", res);
+         
         }
 
         private void RefreshUI()
         {
+            activity_d = new ObservableCollection<ActivityData>();
+            Debug.WriteLine("In Refresh UI");
             //string res = await library.readFile("activityDB");
             //RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(res);
             if ((bool)ApplicationData.Current.LocalSettings.Values["FirstLaunch"] == true)
@@ -157,6 +198,7 @@ namespace TrackMyAct
                     NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
                     StatisticsGrid.Opacity = 100;
                     ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = false;
+                    activity_d.Add(ractivitydata);
                 }
                 catch (Exception ex)
                 {
@@ -173,15 +215,17 @@ namespace TrackMyAct
                     {
                         activity_pos = i;
                     }
+                    
                 }
                 if (activity_pos == -1)
                 {
+                    Debug.Write("In RefreshUI. Activity doesn't exist");
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
                     TimerData tdata = new TimerData();
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
-                    //ractivitydata.timer_data = new List<TimerData>();
+                    ractivitydata.timer_data = new List<TimerData>();
                     ractivitydata.timer_data.Add(tdata);
                     ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                     ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
@@ -192,6 +236,7 @@ namespace TrackMyAct
                     MedianTextBlock.Text = ractivitydata.median;
                     NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
                     StatisticsGrid.Opacity = 100;
+                    
                 }
                 else
                 {
@@ -279,8 +324,22 @@ namespace TrackMyAct
 
         private void AddNew_Click(object sender, RoutedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-            rootFrame.Navigate(typeof(AllTheData), rtrackact);
+            Debug.WriteLine("Add New Button Pressed");
+            activityName.Visibility = Visibility.Collapsed;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Visible;
+            //Frame rootFrame = Window.Current.Content as Frame;
+            //rootFrame.Navigate(typeof(AllTheData), rtrackact);
+
+        }
+
+        private void activityNameComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBoxItem cbt = (ComboBoxItem)activityNameComboBox.SelectedItem;
+            activityName.Text = cbt == null ? activityName.Text : (string)cbt.Content;
+            activityName.Visibility = Visibility.Visible;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
         }
     }
 }
