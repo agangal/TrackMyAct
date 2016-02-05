@@ -19,6 +19,8 @@ using TrackMyAct.Models;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.Collections.ObjectModel;
+using Windows.UI.Xaml.Automation.Peers;
+using Windows.UI.Xaml.Automation.Provider;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace TrackMyAct
@@ -52,49 +54,56 @@ namespace TrackMyAct
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
-            //activity_d = new ObservableCollection<ActivityData>();
-            bool res = await library.checkIfFileExists("activityDB");
-            rtrackact = new RootObjectTrackAct();
-            if (res)
+            if (String.IsNullOrEmpty((string)ApplicationData.Current.LocalSettings.Values["FirstLaunch"]))
             {
-                
-                //activityComboBox actiboxtemp = new activityComboBox();
-                string restring = await library.readFile("activityDB");
-                if (String.IsNullOrEmpty(restring))
-                {
-                    firstLaunch();
-
-                }
-                else
-                {
-                    activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
-                    rtrackact = TrackAct.trackactDataDeserializer(restring);
-                    Debug.WriteLine("Not the first Launch");
-                    int activity_pos = -1;
-                    for (int i = 0; i < rtrackact.activity.Count; i++)
-                    {
-                        if (rtrackact.activity[i].name == activityName.Text)
-                        {
-                            activity_pos = i;
-                        }
-
-                    }
-                    if (activity_pos == -1)
-                    {
-                        StatisticsGrid.Opacity = 0;
-                        personalBest.Opacity = 0;
-                    }
-                    else
-                    {
-                        MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
-                        NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
-                        personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
-                    }
-                }
+                flipviewFirstLaunch.Visibility = Visibility.Visible;
             }
             else
             {
-                firstLaunch();
+                //activity_d = new ObservableCollection<ActivityData>();
+                bool res = await library.checkIfFileExists("activityDB");
+                rtrackact = new RootObjectTrackAct();
+                if (res)
+                {
+
+                    //activityComboBox actiboxtemp = new activityComboBox();
+                    string restring = await library.readFile("activityDB");
+                    if (String.IsNullOrEmpty(restring))
+                    {
+                        firstLaunch();
+
+                    }
+                    else
+                    {
+                        activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+                        rtrackact = TrackAct.trackactDataDeserializer(restring);
+                        Debug.WriteLine("Not the first Launch");
+                        int activity_pos = -1;
+                        for (int i = 0; i < rtrackact.activity.Count; i++)
+                        {
+                            if (rtrackact.activity[i].name == activityName.Text)
+                            {
+                                activity_pos = i;
+                            }
+
+                        }
+                        if (activity_pos == -1)
+                        {
+                            StatisticsGrid.Opacity = 0;
+                            personalBest.Opacity = 0;
+                        }
+                        else
+                        {
+                            MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                            NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                            personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
+                        }
+                    }
+                }
+                else
+                {
+                    firstLaunch();
+                }
             }
         }
 
@@ -103,8 +112,11 @@ namespace TrackMyAct
             ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
             StatisticsGrid.Opacity = 0;
             personalBest.Opacity = 0;
-            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = "IncognitoMode";
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = "In Private Mode";
             activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+            ButtonAutomationPeer peer = new ButtonAutomationPeer(AddNew);
+            IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
+            invokeProv.Invoke();
         }
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -119,7 +131,7 @@ namespace TrackMyAct
 
         private void RecycleButton_Click(object sender, RoutedEventArgs e)
         {
-           
+            activityNameComboBox.Items.Clear();
             activityNameComboBox.Visibility = Visibility.Visible;
             for (int i = 0; i < rtrackact.activity.Count; i++)
             {
@@ -332,10 +344,13 @@ namespace TrackMyAct
         private void AddNew_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Add New Button Pressed");
-            personalBest.Visibility = Visibility.Collapsed;
+            GridOkAddNewAct.Visibility = Visibility.Visible;
+            personalBest.Opacity = 0;
             activityName.Visibility = Visibility.Collapsed;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Visible;
+            //NewActivityName.Focus(FocusState);
+            StatisticsGrid.Opacity = 0;
             //Frame rootFrame = Window.Current.Content as Frame;
             //rootFrame.Navigate(typeof(AllTheData), rtrackact);
 
@@ -352,11 +367,41 @@ namespace TrackMyAct
                 {
                     personalBest.Text = "Your personal best is " + rtrackact.activity[i].personal_best;
                     personalBest.Visibility = Visibility.Visible;
+                    personalBest.Opacity = 100;
+                    MedianTextBlock.Text = rtrackact.activity[i].median;
+                    NinetyPercentileTextBlock.Text = rtrackact.activity[i].ninetypercentile;
+                    break;
                 }
             }
+            
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Collapsed;
+        }
+
+        private void cancelAddAct_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Cancel add act Button Pressed");
+            activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+            GridOkAddNewAct.Visibility = Visibility.Collapsed;
+            personalBest.Opacity = 100;
+            activityName.Visibility = Visibility.Visible;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
+            StatisticsGrid.Opacity = 100;
+        }
+
+        private void newAct_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Cancel add act Button Pressed");
+            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = NewActivityName.Text;
+            activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+            GridOkAddNewAct.Visibility = Visibility.Collapsed;
+            personalBest.Opacity = 0;
+            activityName.Visibility = Visibility.Visible;
+            activityNameComboBox.Visibility = Visibility.Collapsed;
+            NewActivityName.Visibility = Visibility.Collapsed;
+            StatisticsGrid.Opacity = 100;
         }
     }
 }
