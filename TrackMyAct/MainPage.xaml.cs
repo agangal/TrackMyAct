@@ -39,71 +39,80 @@ namespace TrackMyAct
         private Library library;
         private RootObjectTrackAct rtrackact;
         private long countLimit;
+        private DateTime timerstartTime;
+        private DateTime timerendTime;
         private ObservableCollection<ActivityData> activity_d = new ObservableCollection<ActivityData>();
         public MainPage()
         {
             this.InitializeComponent();
             library = new Library();
-            countLimit = 14;
+            countLimit = 90;
                      
             //timerdata = "00:00:00";
         }
 
         
-       
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        private async void stuffToDoWhenNavigatedTo()
         {
-            base.OnNavigatedTo(e);
-            if (String.IsNullOrEmpty((string)ApplicationData.Current.LocalSettings.Values["FirstLaunch"]))
+
+            //activity_d = new ObservableCollection<ActivityData>();
+            bool res = await library.checkIfFileExists("activityDB");
+            rtrackact = new RootObjectTrackAct();
+            if (res)
             {
-                flipviewFirstLaunch.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                //activity_d = new ObservableCollection<ActivityData>();
-                bool res = await library.checkIfFileExists("activityDB");
-                rtrackact = new RootObjectTrackAct();
-                if (res)
+
+                //activityComboBox actiboxtemp = new activityComboBox();
+                string restring = await library.readFile("activityDB");
+                if (String.IsNullOrEmpty(restring))
                 {
+                    firstLaunch();
 
-                    //activityComboBox actiboxtemp = new activityComboBox();
-                    string restring = await library.readFile("activityDB");
-                    if (String.IsNullOrEmpty(restring))
-                    {
-                        firstLaunch();
-
-                    }
-                    else
-                    {
-                        activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
-                        rtrackact = TrackAct.trackactDataDeserializer(restring);
-                        Debug.WriteLine("Not the first Launch");
-                        int activity_pos = -1;
-                        for (int i = 0; i < rtrackact.activity.Count; i++)
-                        {
-                            if (rtrackact.activity[i].name == activityName.Text)
-                            {
-                                activity_pos = i;
-                            }
-
-                        }
-                        if (activity_pos == -1)
-                        {
-                            StatisticsGrid.Opacity = 0;
-                            personalBest.Opacity = 0;
-                        }
-                        else
-                        {
-                            MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
-                            NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
-                            personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
-                        }
-                    }
                 }
                 else
                 {
-                    firstLaunch();
+                    activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+                    rtrackact = TrackAct.trackactDataDeserializer(restring);
+                    Debug.WriteLine("Not the first Launch");
+                    int activity_pos = -1;
+                    for (int i = 0; i < rtrackact.activity.Count; i++)
+                    {
+                        if (rtrackact.activity[i].name == activityName.Text)
+                        {
+                            activity_pos = i;
+                        }
+
+                    }
+                    if (activity_pos == -1)
+                    {
+                        StatisticsGrid.Opacity = 0;
+                        personalBestGrid.Opacity = 0;
+                    }
+                    else
+                    {
+                        MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
+                        NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
+                        personalBest.Text = rtrackact.activity[activity_pos].personal_best;
+                    }
                 }
+            }
+            else
+            {
+                firstLaunch();
+            }
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+            if (ApplicationData.Current.LocalSettings.Values["FirstLaunch"] == null)
+            {
+                mainPageGrid.Visibility = Visibility.Collapsed;
+                introGrid.Visibility = Visibility.Visible;                
+            }
+            else
+            {
+                introGrid.Visibility = Visibility.Collapsed;
+                mainPageGrid.Visibility = Visibility.Visible;
+                stuffToDoWhenNavigatedTo();
             }
         }
 
@@ -111,12 +120,12 @@ namespace TrackMyAct
         {
             ApplicationData.Current.LocalSettings.Values["FirstLaunch"] = true;
             StatisticsGrid.Opacity = 0;
-            personalBest.Opacity = 0;
-            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = "In Private Mode";
+            personalBestGrid.Opacity = 0;
+            //ApplicationData.Current.LocalSettings.Values["CurrentAct"] = "In Private Mode";
             activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
-            ButtonAutomationPeer peer = new ButtonAutomationPeer(AddNew);
+           /* ButtonAutomationPeer peer = new ButtonAutomationPeer(AddNew);
             IInvokeProvider invokeProv = peer.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
-            invokeProv.Invoke();
+            invokeProv.Invoke();*/
         }
         private void GoEllipse_Tapped(object sender, TappedRoutedEventArgs e)
         {
@@ -148,7 +157,7 @@ namespace TrackMyAct
 
         private void GoTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            activityName.Text = NewActivityName.Text;
+            activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
             ApplicationData.Current.LocalSettings.Values["CurrentAct"] = activityName.Text;
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
@@ -171,7 +180,7 @@ namespace TrackMyAct
         {
             timer.Stop();
             timer.Tick -= timer_Tick;
-            
+            timerendTime = DateTime.UtcNow;
             Storyboard myStoryboard;
             Debug.WriteLine("In Stop Timer");
             myStoryboard = (Storyboard)this.Resources["StopButtonPressed"];
@@ -201,9 +210,14 @@ namespace TrackMyAct
                     activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
+                    ractivitydata.createdTime = DateTime.UtcNow;
                     TimerData tdata = new TimerData();
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+                    tdata.startTime = timerstartTime;
+                    tdata.endTime = timerendTime;
+                    ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    lastTime.Text = ractivitydata.lastattempt;
                     ractivitydata.timer_data = new List<TimerData>();
                     ractivitydata.timer_data.Add(tdata);
                     ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
@@ -211,8 +225,8 @@ namespace TrackMyAct
                     ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                     rtrackact.activity = new List<ActivityData>();
                     rtrackact.activity.Add(ractivitydata);
-                    personalBest.Text = "Your personal best is " + ractivitydata.personal_best;
-                    personalBest.Opacity = 100;
+                    personalBest.Text = ractivitydata.personal_best;
+                    personalBestGrid.Opacity = 100;
                     MedianTextBlock.Text = ractivitydata.median;
                     NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
                     StatisticsGrid.Opacity = 100;
@@ -241,17 +255,22 @@ namespace TrackMyAct
                     Debug.Write("In RefreshUI. Activity doesn't exist");
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
+                    ractivitydata.createdTime = DateTime.UtcNow;
                     TimerData tdata = new TimerData();
                     //tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+                    ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    lastTime.Text = ractivitydata.lastattempt;
+                    tdata.startTime = timerstartTime;
+                    tdata.endTime = timerendTime;
                     ractivitydata.timer_data = new List<TimerData>();
                     ractivitydata.timer_data.Add(tdata);
                     ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                     ractivitydata.median = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                     ractivitydata.ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                     rtrackact.activity.Add(ractivitydata);
-                    personalBest.Text = "Your personal best is " + ractivitydata.personal_best;
-                    personalBest.Opacity = 100;
+                    personalBest.Text = ractivitydata.personal_best;
+                    personalBestGrid.Opacity = 100;
                     MedianTextBlock.Text = ractivitydata.median;
                     NinetyPercentileTextBlock.Text = ractivitydata.ninetypercentile;
                     StatisticsGrid.Opacity = 100;
@@ -261,6 +280,8 @@ namespace TrackMyAct
                 {
                     TimerData tdata = new TimerData();
                     tdata.position = rtrackact.activity[activity_pos].timer_data[rtrackact.activity[activity_pos].timer_data.Count - 1].position + 1; // The mumbo jumbo is to get the value of 'position' in the last element in the track_data list and adding 1 to it.
+                    tdata.startTime = timerstartTime;
+                    tdata.endTime = timerendTime;
                     if (tdata.position >= countLimit)
                     {
                         rtrackact.activity[activity_pos].timer_data.RemoveAt(0);
@@ -275,14 +296,16 @@ namespace TrackMyAct
                     time_in_seconds.Add((long)timerdata_TimeSpan.TotalSeconds);
                     long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
                     rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
+                    rtrackact.activity[activity_pos].lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    lastTime.Text = rtrackact.activity[activity_pos].lastattempt;
                     int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
                     long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
                     rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
                     long personal_best = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count - 1));
                     rtrackact.activity[activity_pos].personal_best = String.Format("{0:00}:{1:00}:{2:00}", (personal_best) / 3600, ((personal_best) / 60) % 60, (personal_best) % 60);
                     rtrackact.activity[activity_pos].timer_data.Add(tdata);
-                    personalBest.Text = "Your personal best is " + rtrackact.activity[activity_pos].personal_best;
-                    personalBest.Opacity = 100;
+                    personalBest.Text = rtrackact.activity[activity_pos].personal_best;
+                    personalBestGrid.Opacity = 100;
                     MedianTextBlock.Text = rtrackact.activity[activity_pos].median;
                     NinetyPercentileTextBlock.Text = rtrackact.activity[activity_pos].ninetypercentile;
                     StatisticsGrid.Opacity = 100;
@@ -301,6 +324,7 @@ namespace TrackMyAct
             StopEllipse.IsTapEnabled = true;
             StopTextBlock.IsTapEnabled = true;
             startTime = DateTime.Now;
+            timerstartTime = DateTime.UtcNow;
             //startTicks = DateTime.Now.Ticks;
 
             try
@@ -344,8 +368,10 @@ namespace TrackMyAct
         private void AddNew_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Add New Button Pressed");
+            GoEllipse.IsTapEnabled = false;
+            GoTextBlock.IsTapEnabled = false;
             GridOkAddNewAct.Visibility = Visibility.Visible;
-            personalBest.Opacity = 0;
+            personalBestGrid.Opacity = 0;
             activityName.Visibility = Visibility.Collapsed;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Visible;
@@ -365,9 +391,9 @@ namespace TrackMyAct
             {
                 if(rtrackact.activity[i].name == activityName.Text)
                 {
-                    personalBest.Text = "Your personal best is " + rtrackact.activity[i].personal_best;
+                    personalBest.Text = rtrackact.activity[i].personal_best;
                     personalBest.Visibility = Visibility.Visible;
-                    personalBest.Opacity = 100;
+                    personalBestGrid.Opacity = 100;
                     MedianTextBlock.Text = rtrackact.activity[i].median;
                     NinetyPercentileTextBlock.Text = rtrackact.activity[i].ninetypercentile;
                     break;
@@ -384,7 +410,7 @@ namespace TrackMyAct
             Debug.WriteLine("Cancel add act Button Pressed");
             activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
             GridOkAddNewAct.Visibility = Visibility.Collapsed;
-            personalBest.Opacity = 100;
+            personalBestGrid.Opacity = 100;
             activityName.Visibility = Visibility.Visible;
             activityNameComboBox.Visibility = Visibility.Collapsed;
             NewActivityName.Visibility = Visibility.Collapsed;
@@ -394,14 +420,36 @@ namespace TrackMyAct
         private void newAct_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("Cancel add act Button Pressed");
-            ApplicationData.Current.LocalSettings.Values["CurrentAct"] = NewActivityName.Text;
-            activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
-            GridOkAddNewAct.Visibility = Visibility.Collapsed;
-            personalBest.Opacity = 0;
-            activityName.Visibility = Visibility.Visible;
-            activityNameComboBox.Visibility = Visibility.Collapsed;
-            NewActivityName.Visibility = Visibility.Collapsed;
-            StatisticsGrid.Opacity = 100;
+            if (NewActivityName.Text == "")
+            {
+                NewActivityName.PlaceholderText = "This box cannot be left empty";
+            }
+            else
+            {
+                ApplicationData.Current.LocalSettings.Values["CurrentAct"] = NewActivityName.Text;
+                activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
+                GridOkAddNewAct.Visibility = Visibility.Collapsed;
+                personalBestGrid.Opacity = 0;
+                activityName.Visibility = Visibility.Visible;
+                activityNameComboBox.Visibility = Visibility.Collapsed;
+                NewActivityName.Visibility = Visibility.Collapsed;
+                StatisticsGrid.Opacity = 0;
+            }
+        }
+
+        private void introGo_Click(object sender, RoutedEventArgs e)
+        {
+            if (introBox.Text != "")
+            {
+                ApplicationData.Current.LocalSettings.Values["CurrentAct"] = introBox.Text;
+                introGrid.Visibility = Visibility.Collapsed;
+                mainPageGrid.Visibility = Visibility.Visible;
+                stuffToDoWhenNavigatedTo();
+            }
+            else
+            {
+                introBox.PlaceholderText = "This box cannot be left empty.";
+            }
         }
     }
 }

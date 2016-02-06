@@ -307,12 +307,15 @@
         </Storyboard>
     </Page.Resources>
     <Grid>
-        <Grid x:Name="introGrid">
-            <FlipView x:Name="flipviewFirstLaunch" Margin="40" HorizontalAlignment="Center" Grid.RowSpan="4">
+        <Grid x:Name="introGrid" Visibility="Visible">
+            <FlipView x:Name="flipviewFirstLaunch" Margin="10" HorizontalAlignment="Center" Grid.RowSpan="4">
                 <TextBlock Text="Testing" Foreground="White"></TextBlock>
                 <TextBlock Text="Testing" Foreground="White"></TextBlock>
-                <TextBlock Text="Testing" Foreground="White"></TextBlock>
-                <TextBlock Text="Testing" Foreground="White"></TextBlock>
+                <Grid Margin="100">
+                    <TextBox Name="introBox" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
+                    <Button Content="Go" HorizontalAlignment="Center" VerticalAlignment="Bottom" Name="introGo" Click="introGo_Click"></Button>
+                </Grid>
+                
             </FlipView>
         </Grid>
         <Grid x:Name="mainPageGrid">
@@ -408,7 +411,15 @@
                         </Button>
                     </Border>
                 </Grid>
-                <TextBlock Text="Your personal best is" x:Name="personalBest"
+                <Grid Name="personalBestGrid" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/images/trophyMainPage.png" 
+                               HorizontalAlignment="Center"
+                               Width="20" 
+                               Margin="5,5,0,15"
+                               Height="30"
+                               VerticalAlignment="Center"></Image>
+                        <TextBlock Text="Your personal best is"
                            Foreground="White" 
                            Grid.Row="2" 
                            FontWeight="Light"
@@ -420,6 +431,23 @@
                            Margin="5,5,0,15"
                            FontSize="12"
                            HorizontalAlignment="Center" d:IsLocked="True"></TextBlock>
+
+                        <TextBlock x:Name="personalBest"
+                           Foreground="#f16292" 
+                           Grid.Row="2" 
+                           FontWeight="Light"
+                           FontFamily="Segoe UI" 
+                           TextAlignment="Center" 
+                           TextWrapping="WrapWholeWords" 
+                           Grid.ColumnSpan="6"
+                           VerticalAlignment="Center"
+                           Margin="5,5,0,15"
+                           FontSize="12"
+                           HorizontalAlignment="Center" d:IsLocked="True"></TextBlock>
+
+                    </StackPanel>
+                    
+                </Grid>
                 <Border BorderBrush="#625F80" 
                         BorderThickness="0,0,0,1"
                         Grid.Row="2" VerticalAlignment="Bottom"
@@ -433,10 +461,12 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="1.5*"></ColumnDefinition>
+                    
                     <ColumnDefinition Width="1.5*"></ColumnDefinition>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -447,8 +477,7 @@
                 <TextBlock x:Name="MedianTextBlock" HorizontalAlignment="Center" Margin="15" 
                            Grid.Row="0" Grid.Column="2"
                            TextAlignment="Center" TextWrapping="WrapWholeWords"
-                           Foreground="White" FontSize="18"
-                           Text="03:23:22"/>
+                           Foreground="White" FontSize="18" />
                 <Border x:Name="border" Grid.Row="0" VerticalAlignment="Bottom" 
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
@@ -466,11 +495,22 @@
                        HorizontalAlignment="Center" 
                        Margin="15"
                        TextAlignment="Center" TextWrapping="WrapWholeWords"
-                       Foreground="White" FontSize="18"
-                       Text="03:23:22"/>
+                       Foreground="White" FontSize="18"/>
                 <Border x:Name="border1" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" 
                         VerticalAlignment="Bottom" BorderBrush="#625F80"
                         BorderThickness="0,0,0,1" d:IsHidden="True"></Border>
+                <TextBlock Grid.Row="2" Grid.Column="1"
+                       HorizontalAlignment="Center"
+                       Margin="15"
+                       TextAlignment="Center" 
+                       TextWrapping="WrapWholeWords"
+                       Foreground="White" FontSize="18"
+                       Text="Last Act"></TextBlock>
+                <TextBlock Grid.Row="2" Grid.Column="2" Name="lastTime"
+                       HorizontalAlignment="Center" 
+                       Margin="15"
+                       TextAlignment="Center" TextWrapping="WrapWholeWords"
+                       Foreground="White" FontSize="18"/>
             </Grid>
             <Grid Grid.Row="2" x:Name="GoButtonGrid" RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>
