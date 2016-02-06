@@ -31,7 +31,9 @@ namespace TrackMyAct.Models
         [DataMember]
         public int position { get; set; }   // keep track of in which order the position was added.
         [DataMember]
-        public bool oldest { get; set; }   // set to true if it is the oldest. It'll be the first to be re-written if it is.
+        public DateTime startTime { get; set; }
+        [DataMember]
+        public DateTime endTime { get; set; }
     }
 
     [DataContract]
@@ -44,9 +46,11 @@ namespace TrackMyAct.Models
         [DataMember]
         public string ninetypercentile { get; set; }
         [DataMember]
-        public int current_count { get; set; }
-        [DataMember]
         public string personal_best { get; set; }
+        [DataMember]
+        public DateTime createdTime { get; set;}
+        [DataMember]
+        public string lastattempt { get; set; }
         [DataMember]
         public List<TimerData> timer_data { get; set; }
     }
