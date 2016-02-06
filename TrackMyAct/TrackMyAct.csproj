@@ -109,6 +109,9 @@
     <Compile Include="Pages\Charts.xaml.cs">
       <DependentUpon>Charts.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\FirstLaunch.xaml.cs">
+      <DependentUpon>FirstLaunch.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -119,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Images\background600.png" />
+    <Content Include="Images\HitGo.png" />
+    <Content Include="Images\SeeYourStats.png" />
+    <Content Include="Images\trophyMainPage.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -142,6 +148,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Charts.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\FirstLaunch.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

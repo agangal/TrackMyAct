@@ -309,16 +309,39 @@
     <Grid>
         <Grid x:Name="introGrid" Visibility="Visible">
             <FlipView x:Name="flipviewFirstLaunch" Margin="10" HorizontalAlignment="Center" Grid.RowSpan="4">
-                <TextBlock Text="Testing" Foreground="White"></TextBlock>
-                <TextBlock Text="Testing" Foreground="White"></TextBlock>
-                <Grid Margin="100">
-                    <TextBox Name="introBox" Width="200" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBox>
-                    <Button Content="Go" HorizontalAlignment="Center" VerticalAlignment="Bottom" Name="introGo" Click="introGo_Click"></Button>
+                <Grid>
+                    <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Foreground="White" Text="How-To Track Your Act" FontSize="20" Margin="20"></TextBlock>
+                    <Image Source="/Images/HitGo.png" Margin="50"></Image>
                 </Grid>
+                <Grid>
+                    <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Foreground="White" Text="How-To Track Your Act" FontSize="20" Margin="20"></TextBlock>
+                    <Image Source="/Images/SeeYourStats.png" Margin="50"></Image>
+                </Grid>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Grid.Row="0" Foreground="White"
+                               Grid.Column="1" FontSize="17"
+                               HorizontalAlignment="Center" 
+                               TextAlignment="Center" 
+                               TextWrapping="WrapWholeWords"
+                               VerticalAlignment="Top" 
+                               Text="Give you first act a name"></TextBlock>
+                    <TextBox Name="introBox" Grid.Row="1" Grid.Column="1" 
+                             Width="300" Margin="50" HorizontalAlignment="Center" 
+                             VerticalAlignment="Center"></TextBox>
+                    <Button Grid.Row="2" 
+                            Foreground="White"
+                            Background="#6ED19D" 
+                            Grid.Column="1" FontSize="20"
+                            Width="200" Content="Go" 
+                            Margin="30"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Top" 
+                            Name="introGo" Click="introGo_Click"></Button>
+                </StackPanel>
                 
             </FlipView>
         </Grid>
-        <Grid x:Name="mainPageGrid">
+        <Grid x:Name="mainPageGrid" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -461,12 +484,11 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
                     <ColumnDefinition Width="1.5*"></ColumnDefinition>
-                    
                     <ColumnDefinition Width="1.5*"></ColumnDefinition>
+
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                     <RowDefinition Height="*"></RowDefinition>
                 </Grid.RowDefinitions>
@@ -477,7 +499,8 @@
                 <TextBlock x:Name="MedianTextBlock" HorizontalAlignment="Center" Margin="15" 
                            Grid.Row="0" Grid.Column="2"
                            TextAlignment="Center" TextWrapping="WrapWholeWords"
-                           Foreground="White" FontSize="18" />
+                           Foreground="White" FontSize="18"
+                           Text="03:23:22"/>
                 <Border x:Name="border" Grid.Row="0" VerticalAlignment="Bottom" 
                         Grid.Column="1"
                         Grid.ColumnSpan="2"
@@ -495,22 +518,11 @@
                        HorizontalAlignment="Center" 
                        Margin="15"
                        TextAlignment="Center" TextWrapping="WrapWholeWords"
-                       Foreground="White" FontSize="18"/>
+                       Foreground="White" FontSize="18"
+                       Text="03:23:22"/>
                 <Border x:Name="border1" Grid.Row="2" Grid.ColumnSpan="2" Grid.Column="1" 
                         VerticalAlignment="Bottom" BorderBrush="#625F80"
                         BorderThickness="0,0,0,1" d:IsHidden="True"></Border>
-                <TextBlock Grid.Row="2" Grid.Column="1"
-                       HorizontalAlignment="Center"
-                       Margin="15"
-                       TextAlignment="Center" 
-                       TextWrapping="WrapWholeWords"
-                       Foreground="White" FontSize="18"
-                       Text="Last Act"></TextBlock>
-                <TextBlock Grid.Row="2" Grid.Column="2" Name="lastTime"
-                       HorizontalAlignment="Center" 
-                       Margin="15"
-                       TextAlignment="Center" TextWrapping="WrapWholeWords"
-                       Foreground="White" FontSize="18"/>
             </Grid>
             <Grid Grid.Row="2" x:Name="GoButtonGrid" RenderTransformOrigin="0.5,0.5">
                 <Grid.RenderTransform>

@@ -217,7 +217,7 @@ namespace TrackMyAct
                     tdata.startTime = timerstartTime;
                     tdata.endTime = timerendTime;
                     ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
-                    lastTime.Text = ractivitydata.lastattempt;
+                    //lastTime.Text = ractivitydata.lastattempt;
                     ractivitydata.timer_data = new List<TimerData>();
                     ractivitydata.timer_data.Add(tdata);
                     ractivitydata.personal_best = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
@@ -260,7 +260,7 @@ namespace TrackMyAct
                     //tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
                     ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
-                    lastTime.Text = ractivitydata.lastattempt;
+                    //lastTime.Text = ractivitydata.lastattempt;
                     tdata.startTime = timerstartTime;
                     tdata.endTime = timerendTime;
                     ractivitydata.timer_data = new List<TimerData>();
@@ -297,7 +297,7 @@ namespace TrackMyAct
                     long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
                     rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
                     rtrackact.activity[activity_pos].lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
-                    lastTime.Text = rtrackact.activity[activity_pos].lastattempt;
+                   // lastTime.Text = rtrackact.activity[activity_pos].lastattempt;
                     int pos = (int)(0.9 * (time_in_seconds.Count - 1) + 1); // 0 1 3 4 5 8
                     long ninentypercentilesecond = (time_in_seconds.ElementAtOrDefault(pos));
                     rtrackact.activity[activity_pos].ninetypercentile = String.Format("{0:00}:{1:00}:{2:00}", ninentypercentilesecond / 3600, (ninentypercentilesecond / 60) % 60, ninentypercentilesecond % 60);
@@ -426,6 +426,8 @@ namespace TrackMyAct
             }
             else
             {
+                GoEllipse.IsTapEnabled = true;
+                GoTextBlock.IsTapEnabled = true;
                 ApplicationData.Current.LocalSettings.Values["CurrentAct"] = NewActivityName.Text;
                 activityName.Text = (string)ApplicationData.Current.LocalSettings.Values["CurrentAct"];
                 GridOkAddNewAct.Visibility = Visibility.Collapsed;
