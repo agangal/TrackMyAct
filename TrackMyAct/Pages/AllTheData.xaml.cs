@@ -14,6 +14,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using TrackMyAct.Models;
+using System.Diagnostics;
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace TrackMyAct.Pages
@@ -26,12 +27,14 @@ namespace TrackMyAct.Pages
         public ObservableCollection<ActivityData> activity { get; set; }
         public ObservableCollection<TimerData> tmdata { get; set; }
         public Library library;
+        private RootObjectTrackAct rtrackact;
         public AllTheData()
         {
             this.InitializeComponent();
             library = new Library();
             activity = new ObservableCollection<ActivityData>();
             tmdata = new ObservableCollection<TimerData>();
+            rtrackact = new RootObjectTrackAct();
         }
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
@@ -40,7 +43,7 @@ namespace TrackMyAct.Pages
             if(await library.checkIfFileExists("activityDB"))
             {
                 string fileres = await library.readFile("activityDB");
-                RootObjectTrackAct rtrackact = TrackAct.trackactDataDeserializer(fileres);
+                rtrackact = TrackAct.trackactDataDeserializer(fileres);
                 var activityD = rtrackact.activity;
                 foreach(var actv in activityD)
                 {
@@ -52,6 +55,13 @@ namespace TrackMyAct.Pages
                     tmdata.Add(tdata);
                 }
             }
+        }
+
+        private void ChartButton_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("Chart Button clicked");
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(Charts),rtrackact);
         }
     }
 }

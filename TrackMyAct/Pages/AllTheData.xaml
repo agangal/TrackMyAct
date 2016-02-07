@@ -14,8 +14,10 @@
             <RowDefinition Height="Auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" Text="View all your data here (Page under construction)" Foreground="White"
-                   TextAlignment="Center" TextWrapping="WrapWholeWords"></TextBlock>
+        <Button Grid.Row="0" HorizontalAlignment="Center" IsEnabled="True"
+                Content="Chart" Name="ChartButton" Click="ChartButton_Click"></Button>
+        <!--<TextBlock Grid.Row="0" Text="Your Data" Foreground="White"
+                   TextAlignment="Center" TextWrapping="WrapWholeWords"></TextBlock> -->
         <ListView Name="dataListView"
                   HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch"
