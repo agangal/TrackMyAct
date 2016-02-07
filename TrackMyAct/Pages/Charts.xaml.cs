@@ -30,7 +30,7 @@ namespace TrackMyAct.Pages
         {
             public int count { get; set; }
             public long time_in_seconds  { get; set; }
-            
+            public DateTime time_in_DT { get; set; }
         }
 
         public Charts()
@@ -48,7 +48,7 @@ namespace TrackMyAct.Pages
         {
             base.OnNavigatedTo(e);
             rtrackact = (RootObjectTrackAct)e.Parameter;
-            progressRing.IsActive = true;
+           // progressRing.IsActive = true;
         }
         
         private void LoadChartContents()
@@ -57,10 +57,10 @@ namespace TrackMyAct.Pages
             List<time_data> financialStuffList = new List<time_data>();
             for(int i=0; i < rtrackact.activity[0].timer_data.Count; i++)
             {
-                financialStuffList.Add(new time_data() { count = i, time_in_seconds = rtrackact.activity[0].timer_data[i].time_in_seconds });
+                financialStuffList.Add(new time_data() { count = i, time_in_seconds = rtrackact.activity[0].timer_data[i].time_in_seconds, time_in_DT = new DateTime(1970,01,01,((int)rtrackact.activity[0].timer_data[i].time_in_seconds)/3600, (((int)rtrackact.activity[0].timer_data[i].time_in_seconds)/60)%60, ((int)rtrackact.activity[0].timer_data[i].time_in_seconds)%60)});
             }
-           (BarChart.Series[0] as ColumnSeries).ItemsSource = financialStuffList;
-            progressRing.IsActive = false;
+           (MyChart.Series[0] as ColumnSeries).ItemsSource = financialStuffList;
+           // progressRing.IsActive = false;
 
         }
     }

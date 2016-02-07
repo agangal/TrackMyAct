@@ -7,7 +7,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting" 
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <!--<UserControl>
+            UserControl.Resources> -->
+                <Style x:Key="DateTimeAxisLabelStyle1" TargetType="Charting:DateTimeAxisLabel">
+                    <Setter Property="DaysIntervalStringFormat" Value="{}{0:dd/MM/yyyy}"></Setter>
+                    <Setter Property="HoursIntervalStringFormat" Value="{} {0:hh:mm tt}"></Setter>
+                </Style>
+            <!--</UserControl.Resources>
+        </UserControl>-->
+    </Page.Resources>
     <Grid>
         
         <Grid.RowDefinitions>
@@ -17,12 +26,19 @@
         
         <!--<Image Source="/Images/background600.png" Grid.Row="0" Grid.RowSpan="3" Grid.ColumnSpan="3" Stretch="Fill"></Image>-->
         
-            <Charting:Chart Grid.Row="0"  x:Name="BarChart" Margin="50" HorizontalAlignment="Center" VerticalAlignment="Center" Height="Auto" Width="Auto">
+        <Charting:Chart x:Name="MyChart">
+            <Charting:ColumnSeries Title="Time" IndependentValuePath="count" DependentValuePath="time_in_DT"></Charting:ColumnSeries>
+            <Charting:Chart.Axes>
+                <Charting:DateTimeAxis Orientation="Y"
+                                       AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle1}"></Charting:DateTimeAxis>
+            </Charting:Chart.Axes>
+        </Charting:Chart>
+            <!--<Charting:Chart Grid.Row="0"  x:Name="BarChart" Margin="50" HorizontalAlignment="Center" VerticalAlignment="Center" Height="Auto" Width="Auto">
             <Charting:ColumnSeries Title="Time"  IndependentValuePath="count" 
                                        DependentValuePath="time_in_seconds" IsSelectionEnabled="True">
             </Charting:ColumnSeries>
         </Charting:Chart>
-        <ProgressRing Name="progressRing" Height="50" Width="50"></ProgressRing>
+        <ProgressRing Name="progressRing" Height="50" Width="50"></ProgressRing>-->
             <!-- <Grid.RowDefinitions>
                 <RowDefinition Height="*"></RowDefinition>
                 <RowDefinition Height="4*"></RowDefinition>
