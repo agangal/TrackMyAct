@@ -324,7 +324,7 @@
                                TextAlignment="Center" 
                                TextWrapping="WrapWholeWords"
                                VerticalAlignment="Top" 
-                               Text="Give you first act a name"></TextBlock>
+                               Text="What do you want to time?"></TextBlock>
                     <TextBox Name="introBox" Grid.Row="1" Grid.Column="1" 
                              Width="300" Margin="50" HorizontalAlignment="Center" 
                              VerticalAlignment="Center"></TextBox>
