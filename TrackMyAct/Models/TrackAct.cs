@@ -52,6 +52,8 @@ namespace TrackMyAct.Models
         [DataMember]
         public string lastattempt { get; set; }
         [DataMember]
+        public long totalTime { get; set; }
+        [DataMember]
         public List<TimerData> timer_data { get; set; }
     }
 

@@ -211,9 +211,11 @@ namespace TrackMyAct
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
                     ractivitydata.createdTime = DateTime.UtcNow;
+                    ractivitydata.totalTime = 0;
                     TimerData tdata = new TimerData();
                     tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
+                    ractivitydata.totalTime = ractivitydata.totalTime + tdata.time_in_seconds;
                     tdata.startTime = timerstartTime;
                     tdata.endTime = timerendTime;
                     ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
@@ -256,10 +258,12 @@ namespace TrackMyAct
                     ActivityData ractivitydata = new ActivityData();
                     ractivitydata.name = activityName.Text;
                     ractivitydata.createdTime = DateTime.UtcNow;
+                    ractivitydata.totalTime = 0;
                     TimerData tdata = new TimerData();
                     //tdata.position = 0;             // Since this is a new activity, it won't have any data already associated with it.
                     tdata.time_in_seconds = (long)timerdata_TimeSpan.TotalSeconds;
                     ractivitydata.lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
+                    ractivitydata.totalTime = ractivitydata.totalTime + tdata.time_in_seconds;
                     //lastTime.Text = ractivitydata.lastattempt;
                     tdata.startTime = timerstartTime;
                     tdata.endTime = timerendTime;
@@ -295,6 +299,7 @@ namespace TrackMyAct
                     }
                     time_in_seconds.Add((long)timerdata_TimeSpan.TotalSeconds);
                     long mediansec = (time_in_seconds.ElementAtOrDefault(time_in_seconds.Count / 2));//time_in_seconds[time_in_seconds.Count / 2];
+                    rtrackact.activity[activity_pos].totalTime = rtrackact.activity[activity_pos].totalTime + tdata.time_in_seconds;
                     rtrackact.activity[activity_pos].median = String.Format("{0:00}:{1:00}:{2:00}", mediansec / 3600, (mediansec / 60) % 60, mediansec % 60);
                     rtrackact.activity[activity_pos].lastattempt = String.Format("{0:00}:{1:00}:{2:00}", (long)timerdata_TimeSpan.TotalSeconds / 3600, ((long)timerdata_TimeSpan.TotalSeconds / 60) % 60, (long)timerdata_TimeSpan.TotalSeconds % 60);
                    // lastTime.Text = rtrackact.activity[activity_pos].lastattempt;
