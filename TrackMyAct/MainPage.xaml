@@ -307,7 +307,7 @@
         </Storyboard>
     </Page.Resources>
     <Grid>
-        <Grid x:Name="introGrid" Visibility="Visible">
+        <Grid x:Name="introGrid" Visibility="Collapsed">
             <FlipView x:Name="flipviewFirstLaunch" Margin="10" HorizontalAlignment="Center" Grid.RowSpan="4">
                 <Grid>
                     <TextBlock HorizontalAlignment="Center" TextAlignment="Center" Foreground="White" Text="How-To Track Your Act" FontSize="20" Margin="20"></TextBlock>
@@ -341,7 +341,7 @@
                 
             </FlipView>
         </Grid>
-        <Grid x:Name="mainPageGrid" Visibility="Collapsed">
+        <Grid x:Name="mainPageGrid" Visibility="Visible">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
