@@ -332,7 +332,7 @@
                             Foreground="White"
                             Background="#6ED19D" 
                             Grid.Column="1" FontSize="20"
-                            Width="200" Content="Go" 
+                            Width="200" Content="Let's Go" 
                             Margin="30"
                             HorizontalAlignment="Center" 
                             VerticalAlignment="Top" 
