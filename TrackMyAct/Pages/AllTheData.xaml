@@ -16,10 +16,10 @@
         </Grid.RowDefinitions>
         <!--<Button Grid.Row="0" HorizontalAlignment="Center" IsEnabled="True"
                 Content="Chart" Name="ChartButton" Click="ChartButton_Click"></Button> -->
-        <TextBlock Grid.Row="0" Margin="30"
+        <TextBlock Grid.Row="0" Margin="20,20,20,10"
                    Text="My Activity Board" Foreground="White"
                    TextAlignment="Center" TextWrapping="WrapWholeWords"></TextBlock>
-        <Border BorderBrush="#625F80" HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Bottom" BorderThickness="0,0,0,1"></Border>
+        <Border BorderBrush="White" HorizontalAlignment="Stretch" Grid.Row="0" VerticalAlignment="Bottom" BorderThickness="0,0,0,1"></Border>
 
         <ListView Name="dataListView"
                   ItemClick="dataListView_ItemClick"
@@ -28,11 +28,26 @@
                   ItemsSource="{x:Bind activity}"
                   IsItemClickEnabled="True"
                   Grid.Row="1">
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"></Setter>
+                    <!--<Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListViewItem">
+                                <Border BorderBrush="#625F80" BorderThickness="0,0,0,1"></Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>-->
+                </Style>
+            </ListView.ItemContainerStyle>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="data:ActivityData">
                     <StackPanel Orientation="Vertical">
-                        <TextBlock Text="{x:Bind name}" Foreground="White"></TextBlock>
-                        
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/Images/pointerIcon.png" HorizontalAlignment="Left" Height="10" Width="10"></Image>
+                            <TextBlock Text="{x:Bind name}" Margin="10" Foreground="White"></TextBlock>
+                        </StackPanel>
+                        <Border BorderBrush="#625F80" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.Row="0" BorderThickness="0,0,0,1"></Border>
                     </StackPanel>
                 </DataTemplate>
             </ListView.ItemTemplate>

@@ -155,6 +155,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Images\background600.png" />
     <Content Include="Images\HitGo.png" />
+    <Content Include="Images\pointerIcon.png" />
     <Content Include="Images\SeeYourStats.png" />
     <Content Include="Images\trophyMainPage.png" />
     <None Include="Package.StoreAssociation.xml" />
