@@ -22,7 +22,12 @@ namespace TrackMyAct.Models
             return response;
         }
     }
-
+    public class formatTimeData
+    {
+        public long pos;
+        public string time_in_string;
+        public string datetime;
+    }
     [DataContract]
     public class TimerData
     {

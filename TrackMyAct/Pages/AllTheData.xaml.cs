@@ -63,5 +63,12 @@ namespace TrackMyAct.Pages
             Frame rootFrame = Window.Current.Content as Frame;
             rootFrame.Navigate(typeof(Charts),rtrackact);
         }
+
+        private void dataListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            ActivityData actdata = (ActivityData)e.ClickedItem;
+            Frame rootFrame = Window.Current.Content as Frame;
+            rootFrame.Navigate(typeof(AllTheActivityData), actdata);
+        }
     }
 }

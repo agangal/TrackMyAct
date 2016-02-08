@@ -6,5 +6,8 @@
     RequestedTheme="Light">
     <Application.Resources>
         <ImageBrush x:Key="MainBackground" ImageSource="/images/background600.png"></ImageBrush>
+        
+        
     </Application.Resources>
+    
 </Application>
